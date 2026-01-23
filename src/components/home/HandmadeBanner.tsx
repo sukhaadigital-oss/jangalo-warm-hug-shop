@@ -1,25 +1,25 @@
-import { Leaf, Heart, Clock, Recycle } from 'lucide-react';
+import { Package, Clock, Mail, Sparkles } from 'lucide-react';
 
 const features = [
   {
-    icon: Heart,
-    title: 'Feito com Amor',
-    description: 'Cada costura é feita à mão com cuidado e atenção aos detalhes.',
+    icon: Sparkles,
+    title: 'Exclusivo e Sob Encomenda',
+    description: 'Seu pedido é fabricado exclusivamente para você!',
   },
   {
     icon: Clock,
-    title: 'Produção sob Encomenda',
-    description: 'Produzimos após seu pedido, evitando desperdício.',
+    title: 'Prazo de Postagem',
+    description: 'De 1 a 4 dias úteis. Após a postagem, inicia o prazo de envio.',
   },
   {
-    icon: Leaf,
-    title: 'Materiais Naturais',
-    description: 'Algodão orgânico, linho e tecidos que respeitam a pele.',
+    icon: Package,
+    title: 'Slow Fashion',
+    description: 'Produzimos sob demanda, diminuindo nosso impacto social e desperdício.',
   },
   {
-    icon: Recycle,
-    title: 'Moda Consciente',
-    description: 'Peças duráveis que podem ser passadas adiante.',
+    icon: Mail,
+    title: 'Rastreio por E-mail',
+    description: 'Assim que postado, você recebe o código de rastreio por e-mail!',
   },
 ];
 
@@ -29,13 +29,14 @@ export const HandmadeBanner = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-olive-light text-olive text-sm font-medium mb-4">
-            🌿 Slow Fashion
+            📦 Informações de Envio
           </span>
           <h2 className="font-serif text-3xl md:text-4xl font-medium mb-4">
-            Produção Lenta e Consciente
+            Exclusivo e Sob Encomenda
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            Cada peça é feita à mão após o seu pedido, com materiais naturais e muito carinho.
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Nós praticamos o SLOW FASHION. Produzimos sob demanda, especialmente para cada cliente, 
+            de maneira consciente diminuindo assim nosso impacto social e desperdício de materiais.
           </p>
         </div>
 
