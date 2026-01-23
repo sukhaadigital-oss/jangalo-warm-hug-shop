@@ -26,7 +26,7 @@ export const HeroSection = () => {
           </h1>
           
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            Conforto para crescer e brincar. Cada peça é feita à mão com carinho e materiais naturais.
+            Conforto para crescer e brincar. Cada peça é feita à mão com muito carinho.
           </p>
           
           <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
