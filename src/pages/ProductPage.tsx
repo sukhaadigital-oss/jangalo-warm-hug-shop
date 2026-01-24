@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Leaf, Ruler, Minus, Plus, Heart } from 'lucide-react';
+import { ArrowLeft, Leaf, Ruler, Minus, Plus, Heart, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { useCart } from '@/contexts/CartContext';
-import { products } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
+import { supabaseToLegacyProduct } from '@/types/product';
+import { products as localProducts } from '@/data/products';
 import { addBusinessDays, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -35,10 +37,25 @@ const sizeGuide = [
 const ProductPage = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { products: supabaseProducts, isLoading } = useProducts();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
 
-  const product = products.find((p) => p.id === id);
+  // Find product from Supabase or fall back to local
+  const supabaseProduct = supabaseProducts.find((p) => p.id === id);
+  const localProduct = localProducts.find((p) => p.id === id);
+  
+  const product = supabaseProduct 
+    ? supabaseToLegacyProduct(supabaseProduct) 
+    : localProduct;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (

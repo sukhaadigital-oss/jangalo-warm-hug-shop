@@ -1,27 +1,43 @@
 import { useSearchParams, Link } from 'react-router-dom';
-import { ArrowLeft, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { ProductCard } from '@/components/products/ProductCard';
-import { products, categories } from '@/data/products';
+import { supabaseToLegacyProduct } from '@/types/product';
+import { products as localProducts } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 import { cn } from '@/lib/utils';
+
+// Static categories
+const staticCategories = [
+  { id: '1', name: 'Menina', slug: 'menina' },
+  { id: '2', name: 'Menino', slug: 'menino' },
+  { id: '3', name: 'Bebê', slug: 'bebe' },
+  { id: '4', name: 'Essenciais', slug: 'essenciais' },
+];
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get('categoria');
+  const { products: supabaseProducts, isLoading } = useProducts();
+
+  // Use Supabase products if available, otherwise fall back to local
+  const allProducts = supabaseProducts.length > 0
+    ? supabaseProducts.map(supabaseToLegacyProduct)
+    : localProducts;
 
   const filteredProducts = activeCategory
-    ? products.filter((p) => {
+    ? allProducts.filter((p) => {
         if (activeCategory === 'novidades') return p.isNew;
         if (activeCategory === 'sale') return p.isSale;
         return p.category === activeCategory;
       })
-    : products;
+    : allProducts;
 
   const categoryName = activeCategory
-    ? categories.find((c) => c.slug === activeCategory)?.name ||
+    ? staticCategories.find((c) => c.slug === activeCategory)?.name ||
       (activeCategory === 'novidades'
         ? 'Novidades'
         : activeCategory === 'sale'
@@ -74,7 +90,7 @@ const ProductsPage = () => {
           >
             Novidades
           </Button>
-          {categories.map((category) => (
+          {staticCategories.map((category) => (
             <Button
               key={category.id}
               variant={activeCategory === category.slug ? 'default' : 'outline'}
@@ -99,7 +115,11 @@ const ProductsPage = () => {
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map((product, index) => (
               <div

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '@/hooks/useAuth';
+import { useProducts, Product } from '@/hooks/useProducts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,9 +33,9 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, Plus, Pencil, Trash2, Package, AlertTriangle } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { LogOut, Plus, Pencil, Trash2, Package, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Product } from '@/types/product';
 
 const CATEGORIES = [
   { value: 'novidades', label: 'Novidades' },
@@ -45,48 +46,41 @@ const CATEGORIES = [
   { value: 'sale', label: 'Promoção' },
 ];
 
-const SIZES = ['RN', 'P', 'M', 'G', 'GG', '1', '2', '3', '4', '6', '8', '10', '12'];
-
 const AdminDashboard = () => {
-  const { products, addProduct, updateProduct, deleteProduct, isAuthenticated, logout } = useAdmin();
+  const { products, isLoading: productsLoading, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { user, isAdmin, isLoading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Form state
   const [formData, setFormData] = useState({
     name: '',
     price: '',
-    originalPrice: '',
+    original_price: '',
     description: '',
-    category: 'novidades' as Product['category'],
-    sizes: [] as string[],
-    images: [''],
-    productionDays: '3',
-    stock: '10',
-    isNew: false,
-    isSale: false,
+    category: 'novidades',
+    image_url: '',
+    in_stock: true,
+    featured: false,
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!authLoading && (!user || !isAdmin)) {
       navigate('/admin');
     }
-  }, [isAuthenticated, navigate]);
+  }, [authLoading, user, isAdmin, navigate]);
 
   const resetForm = () => {
     setFormData({
       name: '',
       price: '',
-      originalPrice: '',
+      original_price: '',
       description: '',
       category: 'novidades',
-      sizes: [],
-      images: [''],
-      productionDays: '3',
-      stock: '10',
-      isNew: false,
-      isSale: false,
+      image_url: '',
+      in_stock: true,
+      featured: false,
     });
     setEditingProduct(null);
   };
@@ -96,83 +90,80 @@ const AdminDashboard = () => {
     setFormData({
       name: product.name,
       price: product.price.toString(),
-      originalPrice: product.originalPrice?.toString() || '',
-      description: product.description,
+      original_price: product.original_price?.toString() || '',
+      description: product.description || '',
       category: product.category,
-      sizes: product.sizes,
-      images: product.images.length > 0 ? product.images : [''],
-      productionDays: product.productionDays.toString(),
-      stock: product.stock.toString(),
-      isNew: product.isNew || false,
-      isSale: product.isSale || false,
+      image_url: product.image_url || '',
+      in_stock: product.in_stock,
+      featured: product.featured,
     });
+    setIsAddDialogOpen(true);
   };
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.price || !formData.description) {
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.price) {
       toast.error('Preencha todos os campos obrigatórios');
       return;
     }
 
-    const productData: Product = {
-      id: editingProduct?.id || `product-${Date.now()}`,
+    setIsSubmitting(true);
+
+    const productData = {
       name: formData.name,
       price: parseFloat(formData.price),
-      originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
-      description: formData.description,
+      original_price: formData.original_price ? parseFloat(formData.original_price) : null,
+      description: formData.description || null,
       category: formData.category,
-      sizes: formData.sizes,
-      images: formData.images.filter(img => img.trim() !== ''),
-      productionDays: parseInt(formData.productionDays) || 3,
-      stock: parseInt(formData.stock) || 0,
-      isNew: formData.isNew,
-      isSale: formData.isSale,
+      image_url: formData.image_url || null,
+      in_stock: formData.in_stock,
+      featured: formData.featured,
     };
 
+    let success: boolean;
     if (editingProduct) {
-      updateProduct(editingProduct.id, productData);
-      toast.success('Produto atualizado com sucesso!');
+      success = await updateProduct(editingProduct.id, productData);
     } else {
-      addProduct(productData);
-      toast.success('Produto adicionado com sucesso!');
+      success = await addProduct(productData);
     }
 
-    resetForm();
-    setIsAddDialogOpen(false);
+    setIsSubmitting(false);
+
+    if (success) {
+      resetForm();
+      setIsAddDialogOpen(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteProduct(id);
-    toast.success('Produto removido com sucesso!');
+  const handleDelete = async (id: string) => {
+    await deleteProduct(id);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut();
     navigate('/admin');
-  };
-
-  const toggleSize = (size: string) => {
-    setFormData(prev => ({
-      ...prev,
-      sizes: prev.sizes.includes(size)
-        ? prev.sizes.filter(s => s !== size)
-        : [...prev.sizes, size]
-    }));
   };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(price);
   };
 
-  const lowStockProducts = products.filter(p => p.stock <= 3 && p.stock > 0);
-  const outOfStockProducts = products.filter(p => p.stock === 0);
+  if (authLoading || productsLoading) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const inStockCount = products.filter((p) => p.in_stock).length;
+  const outOfStockCount = products.filter((p) => !p.in_stock).length;
+  const featuredCount = products.filter((p) => p.featured).length;
 
   return (
     <div className="min-h-screen bg-muted/30">
-      {/* Header */}
       <header className="bg-background border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="font-serif text-2xl">Jangalo Kids - Admin</h1>
@@ -184,7 +175,6 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-2">
@@ -198,54 +188,43 @@ const AdminDashboard = () => {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Em Estoque
-              </CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Em Estoque</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-600">
-                {products.filter(p => p.stock > 3).length}
-              </div>
+              <div className="text-3xl font-bold text-green-600">{inStockCount}</div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                Estoque Baixo
-                <AlertTriangle className="w-4 h-4 text-yellow-500" />
-              </CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Esgotados</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-yellow-600">
-                {lowStockProducts.length}
-              </div>
+              <div className="text-3xl font-bold text-red-600">{outOfStockCount}</div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Esgotados
-              </CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Destaques</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-red-600">
-                {outOfStockProducts.length}
-              </div>
+              <div className="text-3xl font-bold text-primary">{featuredCount}</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Products Table */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Package className="w-5 h-5" />
               Produtos
             </CardTitle>
-            <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
-              setIsAddDialogOpen(open);
-              if (!open) resetForm();
-            }}>
+            <Dialog
+              open={isAddDialogOpen}
+              onOpenChange={(open) => {
+                setIsAddDialogOpen(open);
+                if (!open) resetForm();
+              }}
+            >
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="w-4 h-4 mr-2" />
@@ -254,12 +233,8 @@ const AdminDashboard = () => {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>
-                    {editingProduct ? 'Editar Produto' : 'Novo Produto'}
-                  </DialogTitle>
-                  <DialogDescription>
-                    Preencha os dados do produto
-                  </DialogDescription>
+                  <DialogTitle>{editingProduct ? 'Editar Produto' : 'Novo Produto'}</DialogTitle>
+                  <DialogDescription>Preencha os dados do produto</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
@@ -269,7 +244,7 @@ const AdminDashboard = () => {
                       <Input
                         id="name"
                         value={formData.name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                         placeholder="Nome do produto"
                       />
                     </div>
@@ -277,13 +252,13 @@ const AdminDashboard = () => {
                       <Label htmlFor="category">Categoria *</Label>
                       <Select
                         value={formData.category}
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as Product['category'] }))}
+                        onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {CATEGORIES.map(cat => (
+                          {CATEGORIES.map((cat) => (
                             <SelectItem key={cat.value} value={cat.value}>
                               {cat.label}
                             </SelectItem>
@@ -301,103 +276,71 @@ const AdminDashboard = () => {
                         type="number"
                         step="0.01"
                         value={formData.price}
-                        onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
                         placeholder="0.00"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="originalPrice">Preço Original (R$)</Label>
+                      <Label htmlFor="original_price">Preço Original (R$)</Label>
                       <Input
-                        id="originalPrice"
+                        id="original_price"
                         type="number"
                         step="0.01"
-                        value={formData.originalPrice}
-                        onChange={(e) => setFormData(prev => ({ ...prev, originalPrice: e.target.value }))}
+                        value={formData.original_price}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, original_price: e.target.value }))
+                        }
                         placeholder="0.00 (para promoções)"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="stock">Estoque (tecido disponível)</Label>
-                      <Input
-                        id="stock"
-                        type="number"
-                        value={formData.stock}
-                        onChange={(e) => setFormData(prev => ({ ...prev, stock: e.target.value }))}
-                        placeholder="10"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="productionDays">Dias para Produção</Label>
-                      <Input
-                        id="productionDays"
-                        type="number"
-                        value={formData.productionDays}
-                        onChange={(e) => setFormData(prev => ({ ...prev, productionDays: e.target.value }))}
-                        placeholder="3"
-                      />
-                    </div>
-                  </div>
-
                   <div className="space-y-2">
-                    <Label>Tamanhos Disponíveis</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {SIZES.map(size => (
-                        <Button
-                          key={size}
-                          type="button"
-                          variant={formData.sizes.includes(size) ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => toggleSize(size)}
-                        >
-                          {size}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Descrição *</Label>
+                    <Label htmlFor="description">Descrição</Label>
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, description: e.target.value }))
+                      }
                       placeholder="Descrição do produto"
                       rows={3}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="images">URL da Imagem</Label>
+                    <Label htmlFor="image_url">URL da Imagem</Label>
                     <Input
-                      id="images"
-                      value={formData.images[0]}
-                      onChange={(e) => setFormData(prev => ({ ...prev, images: [e.target.value] }))}
+                      id="image_url"
+                      value={formData.image_url}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, image_url: e.target.value }))
+                      }
                       placeholder="https://exemplo.com/imagem.jpg"
                     />
                   </div>
 
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.isNew}
-                        onChange={(e) => setFormData(prev => ({ ...prev, isNew: e.target.checked }))}
-                        className="rounded"
+                  <div className="flex gap-6">
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id="in_stock"
+                        checked={formData.in_stock}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, in_stock: checked }))
+                        }
                       />
-                      <span className="text-sm">Marcar como Novidade</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.isSale}
-                        onChange={(e) => setFormData(prev => ({ ...prev, isSale: e.target.checked }))}
-                        className="rounded"
+                      <Label htmlFor="in_stock">Em Estoque</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id="featured"
+                        checked={formData.featured}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, featured: checked }))
+                        }
                       />
-                      <span className="text-sm">Marcar como Promoção</span>
-                    </label>
+                      <Label htmlFor="featured">Destaque</Label>
+                    </div>
                   </div>
                 </div>
 
@@ -405,236 +348,81 @@ const AdminDashboard = () => {
                   <DialogClose asChild>
                     <Button variant="outline">Cancelar</Button>
                   </DialogClose>
-                  <Button onClick={handleSubmit}>
-                    {editingProduct ? 'Salvar Alterações' : 'Adicionar Produto'}
+                  <Button onClick={handleSubmit} disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Salvando...
+                      </>
+                    ) : editingProduct ? (
+                      'Salvar Alterações'
+                    ) : (
+                      'Adicionar Produto'
+                    )}
                   </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Produto</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead>Estoque</TableHead>
-                  <TableHead>Produção</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell className="font-medium">{product.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">
-                        {CATEGORIES.find(c => c.value === product.category)?.label || product.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatPrice(product.price)}</TableCell>
-                    <TableCell>
-                      <span className={
-                        product.stock === 0 ? 'text-red-600 font-medium' :
-                        product.stock <= 3 ? 'text-yellow-600 font-medium' :
-                        'text-green-600'
-                      }>
-                        {product.stock}
-                      </span>
-                    </TableCell>
-                    <TableCell>{product.productionDays} dias</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        {product.isNew && <Badge className="bg-primary">Novo</Badge>}
-                        {product.isSale && <Badge variant="destructive">Promo</Badge>}
-                        {product.stock === 0 && <Badge variant="outline">Esgotado</Badge>}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => handleEdit(product)}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Editar Produto</DialogTitle>
-                              <DialogDescription>
-                                Atualize os dados do produto
-                              </DialogDescription>
-                            </DialogHeader>
-
-                            <div className="grid gap-4 py-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-name">Nome *</Label>
-                                  <Input
-                                    id="edit-name"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                    placeholder="Nome do produto"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-category">Categoria *</Label>
-                                  <Select
-                                    value={formData.category}
-                                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as Product['category'] }))}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {CATEGORIES.map(cat => (
-                                        <SelectItem key={cat.value} value={cat.value}>
-                                          {cat.label}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-price">Preço (R$) *</Label>
-                                  <Input
-                                    id="edit-price"
-                                    type="number"
-                                    step="0.01"
-                                    value={formData.price}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                                    placeholder="0.00"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-originalPrice">Preço Original (R$)</Label>
-                                  <Input
-                                    id="edit-originalPrice"
-                                    type="number"
-                                    step="0.01"
-                                    value={formData.originalPrice}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, originalPrice: e.target.value }))}
-                                    placeholder="0.00 (para promoções)"
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-stock">Estoque</Label>
-                                  <Input
-                                    id="edit-stock"
-                                    type="number"
-                                    value={formData.stock}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, stock: e.target.value }))}
-                                    placeholder="10"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-productionDays">Dias para Produção</Label>
-                                  <Input
-                                    id="edit-productionDays"
-                                    type="number"
-                                    value={formData.productionDays}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, productionDays: e.target.value }))}
-                                    placeholder="3"
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                <Label>Tamanhos Disponíveis</Label>
-                                <div className="flex flex-wrap gap-2">
-                                  {SIZES.map(size => (
-                                    <Button
-                                      key={size}
-                                      type="button"
-                                      variant={formData.sizes.includes(size) ? "default" : "outline"}
-                                      size="sm"
-                                      onClick={() => toggleSize(size)}
-                                    >
-                                      {size}
-                                    </Button>
-                                  ))}
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                <Label htmlFor="edit-description">Descrição *</Label>
-                                <Textarea
-                                  id="edit-description"
-                                  value={formData.description}
-                                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                                  placeholder="Descrição do produto"
-                                  rows={3}
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <Label htmlFor="edit-images">URL da Imagem</Label>
-                                <Input
-                                  id="edit-images"
-                                  value={formData.images[0]}
-                                  onChange={(e) => setFormData(prev => ({ ...prev, images: [e.target.value] }))}
-                                  placeholder="https://exemplo.com/imagem.jpg"
-                                />
-                              </div>
-
-                              <div className="flex gap-4">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input
-                                    type="checkbox"
-                                    checked={formData.isNew}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, isNew: e.target.checked }))}
-                                    className="rounded"
-                                  />
-                                  <span className="text-sm">Marcar como Novidade</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input
-                                    type="checkbox"
-                                    checked={formData.isSale}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, isSale: e.target.checked }))}
-                                    className="rounded"
-                                  />
-                                  <span className="text-sm">Marcar como Promoção</span>
-                                </label>
-                              </div>
-                            </div>
-
-                            <DialogFooter>
-                              <DialogClose asChild>
-                                <Button variant="outline">Cancelar</Button>
-                              </DialogClose>
-                              <Button onClick={handleSubmit}>
-                                Salvar Alterações
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleDelete(product.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            {products.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Nenhum produto cadastrado</p>
+                <p className="text-sm">Clique em "Adicionar Produto" para começar</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Produto</TableHead>
+                    <TableHead>Categoria</TableHead>
+                    <TableHead>Preço</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {products.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell className="font-medium">{product.name}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">
+                          {CATEGORIES.find((c) => c.value === product.category)?.label ||
+                            product.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{formatPrice(product.price)}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          {product.featured && <Badge className="bg-primary">Destaque</Badge>}
+                          {!product.in_stock && <Badge variant="outline">Esgotado</Badge>}
+                          {product.in_stock && (
+                            <Badge variant="secondary" className="text-green-600">
+                              Disponível
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" size="icon" onClick={() => handleEdit(product)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDelete(product.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </main>
