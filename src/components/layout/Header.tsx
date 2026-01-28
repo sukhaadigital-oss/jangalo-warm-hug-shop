@@ -33,10 +33,13 @@ export const Header = () => {
           </Button>
 
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex flex-col items-center">
             <h1 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
               Jangalo Kids
             </h1>
+            <span className="text-[10px] md:text-xs tracking-[0.2em] text-muted-foreground uppercase">
+              Moda Infantil Artesanal
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
