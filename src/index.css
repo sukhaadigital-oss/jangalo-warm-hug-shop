@@ -23,9 +23,9 @@
     --popover: 40 33% 98%;
     --popover-foreground: 25 20% 20%;
 
-    /* Terracotta - Primary brand color */
-    --primary: 16 45% 55%; /* Warm terracotta */
-    --primary-foreground: 40 33% 98%;
+    /* Nude Beige - Primary brand color */
+    --primary: 25 30% 65%; /* Warm nude beige */
+    --primary-foreground: 25 20% 15%;
 
     /* Beige/Sand - Secondary */
     --secondary: 35 30% 90%; /* Soft beige */
@@ -45,13 +45,13 @@
     /* Borders and inputs */
     --border: 35 20% 85%;
     --input: 35 20% 88%;
-    --ring: 16 45% 55%;
+    --ring: 25 30% 65%;
 
     --radius: 1rem;
 
     /* Custom brand colors */
-    --terracotta: 16 45% 55%;
-    --terracotta-light: 16 40% 75%;
+    --nude: 25 30% 65%;
+    --nude-light: 25 25% 80%;
     --sand: 38 35% 85%;
     --olive: 85 25% 45%;
     --olive-light: 85 20% 85%;
@@ -70,12 +70,12 @@
     /* Sidebar */
     --sidebar-background: 40 25% 96%;
     --sidebar-foreground: 25 20% 25%;
-    --sidebar-primary: 16 45% 55%;
-    --sidebar-primary-foreground: 40 33% 98%;
+    --sidebar-primary: 25 30% 65%;
+    --sidebar-primary-foreground: 25 20% 15%;
     --sidebar-accent: 35 30% 90%;
     --sidebar-accent-foreground: 25 20% 25%;
     --sidebar-border: 35 20% 85%;
-    --sidebar-ring: 16 45% 55%;
+    --sidebar-ring: 25 30% 65%;
   }
 
   .dark {
@@ -88,8 +88,8 @@
     --popover: 25 20% 10%;
     --popover-foreground: 40 25% 92%;
 
-    --primary: 16 50% 60%;
-    --primary-foreground: 25 20% 10%;
+    --primary: 25 35% 70%;
+    --primary-foreground: 25 20% 15%;
 
     --secondary: 25 15% 20%;
     --secondary-foreground: 40 25% 92%;
@@ -105,10 +105,10 @@
 
     --border: 25 15% 22%;
     --input: 25 15% 22%;
-    --ring: 16 50% 60%;
+    --ring: 25 35% 70%;
 
-    --terracotta: 16 50% 60%;
-    --terracotta-light: 16 35% 40%;
+    --nude: 25 35% 70%;
+    --nude-light: 25 25% 45%;
     --sand: 35 20% 25%;
     --olive: 85 30% 50%;
     --olive-light: 85 20% 25%;
@@ -117,12 +117,12 @@
 
     --sidebar-background: 25 18% 12%;
     --sidebar-foreground: 40 25% 92%;
-    --sidebar-primary: 16 50% 60%;
-    --sidebar-primary-foreground: 25 20% 10%;
+    --sidebar-primary: 25 35% 70%;
+    --sidebar-primary-foreground: 25 20% 15%;
     --sidebar-accent: 25 15% 18%;
     --sidebar-accent-foreground: 40 25% 92%;
     --sidebar-border: 25 15% 22%;
-    --sidebar-ring: 16 50% 60%;
+    --sidebar-ring: 25 35% 70%;
   }
 }
 
@@ -181,11 +181,11 @@
   /* Category circle */
   .category-circle {
     @apply rounded-full overflow-hidden border-2 organic-transition;
-    border-color: hsl(var(--terracotta-light));
+    border-color: hsl(var(--nude-light));
   }
 
   .category-circle:hover {
-    border-color: hsl(var(--terracotta));
+    border-color: hsl(var(--nude));
     transform: scale(1.05);
   }
 }
