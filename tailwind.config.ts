@@ -58,9 +58,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         // Jangalo Kids brand colors
-        terracotta: {
-          DEFAULT: "hsl(var(--terracotta))",
-          light: "hsl(var(--terracotta-light))",
+        nude: {
+          DEFAULT: "hsl(var(--nude))",
+          light: "hsl(var(--nude-light))",
         },
         sand: "hsl(var(--sand))",
         olive: {
