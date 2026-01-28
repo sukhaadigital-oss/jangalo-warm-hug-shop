@@ -63,9 +63,11 @@ export const Header = () => {
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="hidden md:flex">
-              <User className="h-5 w-5" />
-            </Button>
+            <Link to="/admin">
+              <Button variant="ghost" size="icon" className="hidden md:flex">
+                <User className="h-5 w-5" />
+              </Button>
+            </Link>
             <Button variant="ghost" size="icon" className="relative" onClick={openCart}>
               <ShoppingBag className="h-5 w-5" />
               {totalItems > 0 && (
