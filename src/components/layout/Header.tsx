@@ -4,6 +4,7 @@ import { ShoppingBag, Menu, X, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
+import logo from '@/assets/logo.png';
 
 const navLinks = [
   { name: 'Novidades', href: '/produtos?categoria=novidades' },
@@ -34,9 +35,11 @@ export const Header = () => {
 
           {/* Logo */}
           <Link to="/" className="flex flex-col items-center">
-            <h1 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-              Jangalo Kids
-            </h1>
+            <img 
+              src={logo} 
+              alt="Jangalô" 
+              className="h-12 md:h-16 w-auto"
+            />
             <span className="text-[10px] md:text-xs tracking-[0.2em] text-muted-foreground uppercase">
               Moda Infantil Artesanal
             </span>
