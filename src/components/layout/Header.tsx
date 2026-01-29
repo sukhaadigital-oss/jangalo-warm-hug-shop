@@ -40,7 +40,7 @@ export const Header = () => {
 
           {/* Logo */}
           <Link to="/" className="flex flex-col items-center">
-            <img src={logo} alt="Jangalô" className="h-12 md:h-16 w-auto" />
+            <img src={logo} alt="Jangalô" className="h-16 md:h-24 w-auto" />
             <span className="text-[10px] md:text-xs tracking-[0.2em] text-muted-foreground uppercase">
           </span>
           </Link>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Instagram, Mail, Heart } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 export const Footer = () => {
   return (
@@ -8,7 +9,9 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
-            <h3 className="font-serif text-2xl font-semibold mb-4">Jangalo Kids</h3>
+            <Link to="/">
+              <img src={logo} alt="Jangalô" className="h-16 w-auto mb-4" />
+            </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Roupas que abraçam: feitas à mão com amor e carinho para os pequenos.
             </p>
