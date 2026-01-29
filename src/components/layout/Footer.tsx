@@ -10,7 +10,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/">
-              <img src={logo} alt="Jangalô" className="h-16 w-auto mb-4" />
+              <img src={logo} alt="Jangalô" className="h-24 w-auto mb-4" />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Roupas que abraçam: feitas à mão com amor e carinho para os pequenos.
