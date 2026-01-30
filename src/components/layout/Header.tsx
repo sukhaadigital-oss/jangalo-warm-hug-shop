@@ -38,8 +38,8 @@ export const Header = () => {
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          {/* Logo - centered and overlapping */}
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2 translate-y-[30%] z-10">
+          {/* Logo - left aligned and overlapping */}
+          <Link to="/" className="absolute left-4 translate-y-[30%] z-10">
             <img src={logo} alt="Jangalô" className="h-24 md:h-36 w-auto" />
           </Link>
 
