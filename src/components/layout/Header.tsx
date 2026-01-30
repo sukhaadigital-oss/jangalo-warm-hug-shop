@@ -31,17 +31,20 @@ export const Header = () => {
     totalItems
   } = useCart();
   return <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20 md:h-28">
+      <div className="container mx-auto px-4 relative">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Mobile menu button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img src={logo} alt="Jangalô" className="h-16 md:h-24 w-auto" />
+          {/* Logo - centered and overlapping */}
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2 translate-y-[30%] z-10">
+            <img src={logo} alt="Jangalô" className="h-24 md:h-36 w-auto" />
           </Link>
+
+          {/* Spacer for layout balance */}
+          <div className="flex-1 md:hidden" />
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
