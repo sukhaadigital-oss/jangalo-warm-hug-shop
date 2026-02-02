@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      notification_settings: {
+        Row: {
+          created_at: string
+          id: string
+          notify_low_stock: boolean
+          updated_at: string
+          user_id: string
+          whatsapp_api_type: string | null
+          whatsapp_api_url: string | null
+          whatsapp_instance_id: string | null
+          whatsapp_number: string | null
+          whatsapp_token: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notify_low_stock?: boolean
+          updated_at?: string
+          user_id: string
+          whatsapp_api_type?: string | null
+          whatsapp_api_url?: string | null
+          whatsapp_instance_id?: string | null
+          whatsapp_number?: string | null
+          whatsapp_token?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notify_low_stock?: boolean
+          updated_at?: string
+          user_id?: string
+          whatsapp_api_type?: string | null
+          whatsapp_api_url?: string | null
+          whatsapp_instance_id?: string | null
+          whatsapp_number?: string | null
+          whatsapp_token?: string | null
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
@@ -49,6 +88,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      product_stock: {
+        Row: {
+          created_at: string
+          id: string
+          min_stock_alert: number
+          product_id: string
+          quantity: number
+          size: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          min_stock_alert?: number
+          product_id: string
+          quantity?: number
+          size: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          min_stock_alert?: number
+          product_id?: string
+          quantity?: number
+          size?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_stock_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -91,6 +168,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      stock_alert_logs: {
+        Row: {
+          id: string
+          notification_sent_at: string
+          notification_type: string
+          product_id: string
+          quantity_at_alert: number
+          size: string
+        }
+        Insert: {
+          id?: string
+          notification_sent_at?: string
+          notification_type?: string
+          product_id: string
+          quantity_at_alert: number
+          size: string
+        }
+        Update: {
+          id?: string
+          notification_sent_at?: string
+          notification_type?: string
+          product_id?: string
+          quantity_at_alert?: number
+          size?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_alert_logs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
