@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
   TableBody,
@@ -34,8 +35,10 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { LogOut, Plus, Pencil, Trash2, Package, Loader2 } from 'lucide-react';
+import { LogOut, Plus, Pencil, Trash2, Package, Loader2, Bell, Boxes } from 'lucide-react';
 import { toast } from 'sonner';
+import { StockManager } from '@/components/admin/StockManager';
+import { NotificationSettings } from '@/components/admin/NotificationSettings';
 
 const CATEGORIES = [
   { value: 'novidades', label: 'Novidades' },
@@ -212,219 +215,246 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Package className="w-5 h-5" />
+        <Tabs defaultValue="products" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="products" className="flex items-center gap-2">
+              <Package className="w-4 h-4" />
               Produtos
-            </CardTitle>
-            <Dialog
-              open={isAddDialogOpen}
-              onOpenChange={(open) => {
-                setIsAddDialogOpen(open);
-                if (!open) resetForm();
-              }}
-            >
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Produto
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>{editingProduct ? 'Editar Produto' : 'Novo Produto'}</DialogTitle>
-                  <DialogDescription>Preencha os dados do produto</DialogDescription>
-                </DialogHeader>
+            </TabsTrigger>
+            <TabsTrigger value="stock" className="flex items-center gap-2">
+              <Boxes className="w-4 h-4" />
+              Estoque
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell className="w-4 h-4" />
+              Notificações
+            </TabsTrigger>
+          </TabsList>
 
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Nome *</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                        placeholder="Nome do produto"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Categoria *</Label>
-                      <Select
-                        value={formData.category}
-                        onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CATEGORIES.map((cat) => (
-                            <SelectItem key={cat.value} value={cat.value}>
-                              {cat.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+          <TabsContent value="products">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  Produtos
+                </CardTitle>
+                <Dialog
+                  open={isAddDialogOpen}
+                  onOpenChange={(open) => {
+                    setIsAddDialogOpen(open);
+                    if (!open) resetForm();
+                  }}
+                >
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Adicionar Produto
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>{editingProduct ? 'Editar Produto' : 'Novo Produto'}</DialogTitle>
+                      <DialogDescription>Preencha os dados do produto</DialogDescription>
+                    </DialogHeader>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="price">Preço (R$) *</Label>
-                      <Input
-                        id="price"
-                        type="number"
-                        step="0.01"
-                        value={formData.price}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
-                        placeholder="0.00"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="original_price">Preço Original (R$)</Label>
-                      <Input
-                        id="original_price"
-                        type="number"
-                        step="0.01"
-                        value={formData.original_price}
-                        onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, original_price: e.target.value }))
-                        }
-                        placeholder="0.00 (para promoções)"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Descrição</Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, description: e.target.value }))
-                      }
-                      placeholder="Descrição do produto"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="image_url">URL da Imagem</Label>
-                    <Input
-                      id="image_url"
-                      value={formData.image_url}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, image_url: e.target.value }))
-                      }
-                      placeholder="https://exemplo.com/imagem.jpg"
-                    />
-                  </div>
-
-                  <div className="flex gap-6">
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="in_stock"
-                        checked={formData.in_stock}
-                        onCheckedChange={(checked) =>
-                          setFormData((prev) => ({ ...prev, in_stock: checked }))
-                        }
-                      />
-                      <Label htmlFor="in_stock">Em Estoque</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="featured"
-                        checked={formData.featured}
-                        onCheckedChange={(checked) =>
-                          setFormData((prev) => ({ ...prev, featured: checked }))
-                        }
-                      />
-                      <Label htmlFor="featured">Destaque</Label>
-                    </div>
-                  </div>
-                </div>
-
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancelar</Button>
-                  </DialogClose>
-                  <Button onClick={handleSubmit} disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Salvando...
-                      </>
-                    ) : editingProduct ? (
-                      'Salvar Alterações'
-                    ) : (
-                      'Adicionar Produto'
-                    )}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </CardHeader>
-          <CardContent>
-            {products.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhum produto cadastrado</p>
-                <p className="text-sm">Clique em "Adicionar Produto" para começar</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Produto</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead>Preço</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {products.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">
-                          {CATEGORIES.find((c) => c.value === product.category)?.label ||
-                            product.category}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{formatPrice(product.price)}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          {product.featured && <Badge className="bg-primary">Destaque</Badge>}
-                          {!product.in_stock && <Badge variant="outline">Esgotado</Badge>}
-                          {product.in_stock && (
-                            <Badge variant="secondary" className="text-green-600">
-                              Disponível
-                            </Badge>
-                          )}
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Nome *</Label>
+                          <Input
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                            placeholder="Nome do produto"
+                          />
                         </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="outline" size="icon" onClick={() => handleEdit(product)}>
-                            <Pencil className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleDelete(product.id)}
+                        <div className="space-y-2">
+                          <Label htmlFor="category">Categoria *</Label>
+                          <Select
+                            value={formData.category}
+                            onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {CATEGORIES.map((cat) => (
+                                <SelectItem key={cat.value} value={cat.value}>
+                                  {cat.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="price">Preço (R$) *</Label>
+                          <Input
+                            id="price"
+                            type="number"
+                            step="0.01"
+                            value={formData.price}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
+                            placeholder="0.00"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="original_price">Preço Original (R$)</Label>
+                          <Input
+                            id="original_price"
+                            type="number"
+                            step="0.01"
+                            value={formData.original_price}
+                            onChange={(e) =>
+                              setFormData((prev) => ({ ...prev, original_price: e.target.value }))
+                            }
+                            placeholder="0.00 (para promoções)"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="description">Descrição</Label>
+                        <Textarea
+                          id="description"
+                          value={formData.description}
+                          onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, description: e.target.value }))
+                          }
+                          placeholder="Descrição do produto"
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="image_url">URL da Imagem</Label>
+                        <Input
+                          id="image_url"
+                          value={formData.image_url}
+                          onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, image_url: e.target.value }))
+                          }
+                          placeholder="https://exemplo.com/imagem.jpg"
+                        />
+                      </div>
+
+                      <div className="flex gap-6">
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            id="in_stock"
+                            checked={formData.in_stock}
+                            onCheckedChange={(checked) =>
+                              setFormData((prev) => ({ ...prev, in_stock: checked }))
+                            }
+                          />
+                          <Label htmlFor="in_stock">Em Estoque</Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            id="featured"
+                            checked={formData.featured}
+                            onCheckedChange={(checked) =>
+                              setFormData((prev) => ({ ...prev, featured: checked }))
+                            }
+                          />
+                          <Label htmlFor="featured">Destaque</Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="outline">Cancelar</Button>
+                      </DialogClose>
+                      <Button onClick={handleSubmit} disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Salvando...
+                          </>
+                        ) : editingProduct ? (
+                          'Salvar Alterações'
+                        ) : (
+                          'Adicionar Produto'
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </CardHeader>
+              <CardContent>
+                {products.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Nenhum produto cadastrado</p>
+                    <p className="text-sm">Clique em "Adicionar Produto" para começar</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Produto</TableHead>
+                        <TableHead>Categoria</TableHead>
+                        <TableHead>Preço</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {products.map((product) => (
+                        <TableRow key={product.id}>
+                          <TableCell className="font-medium">{product.name}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {CATEGORIES.find((c) => c.value === product.category)?.label ||
+                                product.category}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{formatPrice(product.price)}</TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              {product.featured && <Badge className="bg-primary">Destaque</Badge>}
+                              {!product.in_stock && <Badge variant="outline">Esgotado</Badge>}
+                              {product.in_stock && (
+                                <Badge variant="secondary" className="text-green-600">
+                                  Disponível
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button variant="outline" size="icon" onClick={() => handleEdit(product)}>
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handleDelete(product.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="stock">
+            <StockManager />
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <NotificationSettings />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
