@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lock, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Lock, Loader2, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminLogin = () => {
@@ -95,6 +95,17 @@ const AdminLogin = () => {
             </Button>
           </form>
         </CardContent>
+        <CardFooter className="flex flex-col gap-2 border-t pt-4">
+          <p className="text-sm text-muted-foreground text-center">
+            Ainda não tem uma conta?
+          </p>
+          <Button asChild variant="outline" className="w-full">
+            <Link to="/admin/setup">
+              <UserPlus className="w-4 h-4 mr-2" />
+              Criar conta de administrador
+            </Link>
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );
