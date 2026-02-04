@@ -9,6 +9,7 @@ import { ProductsProvider } from "@/hooks/useProducts";
 import Index from "./pages/Index";
 import ProductsPage from "./pages/ProductsPage";
 import ProductPage from "./pages/ProductPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSetup from "./pages/AdminSetup";
@@ -29,6 +30,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/produtos" element={<ProductsPage />} />
                 <Route path="/produto/:id" element={<ProductPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/admin" element={<AdminLogin />} />
                 <Route path="/admin/setup" element={<AdminSetup />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />

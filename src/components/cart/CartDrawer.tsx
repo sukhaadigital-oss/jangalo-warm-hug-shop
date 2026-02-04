@@ -1,4 +1,5 @@
 import { X, Minus, Plus, Trash2, Leaf } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useCart } from '@/contexts/CartContext';
@@ -6,6 +7,7 @@ import { addBusinessDays, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export const CartDrawer = () => {
+  const navigate = useNavigate();
   const {
     items,
     isOpen,
@@ -15,6 +17,11 @@ export const CartDrawer = () => {
     subtotal,
     maxProductionDays,
   } = useCart();
+
+  const handleCheckout = () => {
+    closeCart();
+    navigate('/checkout');
+  };
 
   const estimatedShipDate = addBusinessDays(new Date(), maxProductionDays);
 
@@ -129,7 +136,7 @@ export const CartDrawer = () => {
               </div>
 
               {/* Checkout button */}
-              <Button className="w-full h-12 rounded-xl font-medium">
+              <Button className="w-full h-12 rounded-xl font-medium" onClick={handleCheckout}>
                 Finalizar Compra
               </Button>
 

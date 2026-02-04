@@ -35,10 +35,11 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { LogOut, Plus, Pencil, Trash2, Package, Loader2, Bell, Boxes } from 'lucide-react';
+import { LogOut, Plus, Pencil, Trash2, Package, Loader2, Bell, Boxes, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
 import { StockManager } from '@/components/admin/StockManager';
 import { NotificationSettings } from '@/components/admin/NotificationSettings';
+import { OrderManager } from '@/components/admin/OrderManager';
 
 const CATEGORIES = [
   { value: 'novidades', label: 'Novidades' },
@@ -215,8 +216,12 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue="products" className="space-y-6">
+        <Tabs defaultValue="orders" className="space-y-6">
           <TabsList>
+            <TabsTrigger value="orders" className="flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4" />
+              Pedidos
+            </TabsTrigger>
             <TabsTrigger value="products" className="flex items-center gap-2">
               <Package className="w-4 h-4" />
               Produtos
@@ -230,6 +235,10 @@ const AdminDashboard = () => {
               Notificações
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="orders">
+            <OrderManager />
+          </TabsContent>
 
           <TabsContent value="products">
             <Card>
