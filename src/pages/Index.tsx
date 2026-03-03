@@ -12,7 +12,7 @@ const Index = () => {
       <Header />
       <CartDrawer />
       
-      <main>
+      <main className="pt-8">
         <HeroSection />
         <CategoryGrid />
         <FeaturedProducts />
