@@ -9,7 +9,7 @@ export const HeroSection = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
       </div>
 
-      <div className="container relative mx-auto px-4 py-24 md:py-32 lg:py-40">
+      <div className="container relative mx-auto px-4 py-16 md:py-20 lg:py-24">
         <div className="max-w-xl">
           
           
