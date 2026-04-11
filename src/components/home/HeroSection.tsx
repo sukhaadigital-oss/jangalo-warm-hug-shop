@@ -1,18 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import heroBanner from '@/assets/hero-banner.jpg';
-export const HeroSection = () => {
-  return <section className="relative overflow-hidden">
-      <div className="absolute inset-0">
-        <img src={heroBanner} alt="Jangalo Kids - Roupas artesanais infantis" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
-      </div>
 
-      <div className="container relative mx-auto px-4 py-16 md:py-20 lg:py-24">
-        <div className="max-w-xl">
-          
-          
+export const HeroSection = () => {
+  return <section className="bg-background">
+      <div className="container mx-auto px-4 py-16 md:py-20 lg:py-24">
+        <div className="max-w-xl mx-auto text-center pt-20 md:pt-32">
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium leading-tight mb-6 animate-fade-in" style={{
           animationDelay: '0.1s'
         }}>
@@ -25,7 +18,7 @@ export const HeroSection = () => {
             Conforto para crescer e brincar. Cada peça é feita à mão com muito carinho.
           </p>
           
-          <div className="flex flex-wrap gap-4 animate-fade-in" style={{
+          <div className="flex flex-wrap justify-center gap-4 animate-fade-in" style={{
           animationDelay: '0.3s'
         }}>
             <Button asChild size="lg" className="rounded-xl h-12 px-6">
