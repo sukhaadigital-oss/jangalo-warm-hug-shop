@@ -32,14 +32,14 @@ export const Header = () => {
   } = useCart();
   return <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="relative flex items-center justify-between h-16 md:h-20">
           {/* Mobile menu button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          {/* Logo - overlapping below header */}
-          <Link to="/" className="relative z-10">
+          {/* Logo - centered and overlapping below header */}
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2 z-10">
             <img src={logo} alt="Jangalô" className="h-20 md:h-32 w-auto translate-y-[25%]" />
           </Link>
 
