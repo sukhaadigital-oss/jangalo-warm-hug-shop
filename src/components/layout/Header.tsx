@@ -30,7 +30,7 @@ export const Header = () => {
     openCart,
     totalItems
   } = useCart();
-  return <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+  return <header className="relative z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="relative flex items-center justify-between h-16 md:h-20">
           {/* Mobile menu button */}
