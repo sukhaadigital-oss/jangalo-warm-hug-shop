@@ -40,7 +40,7 @@ export const Header = () => {
 
           {/* Logo - centered and overlapping below header */}
           <Link to="/" className="absolute left-1/2 -translate-x-1/2 z-10">
-            <img src={logo} alt="Jangalô" className="h-40 md:h-64 w-auto translate-y-[90%]" />
+            <img src={logo} alt="Jangalô" className="h-28 md:h-64 w-auto max-w-[80vw] object-contain translate-y-[90%]" />
           </Link>
 
           {/* Desktop Navigation */}
