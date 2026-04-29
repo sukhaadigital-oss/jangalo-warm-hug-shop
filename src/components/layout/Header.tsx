@@ -39,7 +39,7 @@ export const Header = () => {
           </Button>
 
           {/* Logo - centered and overlapping below header */}
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2 top-full z-10 w-[70vw] max-w-[260px] md:max-w-[420px]">
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2 top-full mt-4 md:mt-6 z-10 w-[70vw] max-w-[260px] md:max-w-[420px]">
             <img src={logo} alt="Jangalô" className="w-full h-auto block" />
           </Link>
 
