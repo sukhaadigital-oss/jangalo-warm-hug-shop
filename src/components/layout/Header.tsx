@@ -32,7 +32,7 @@ export const Header = () => {
   } = useCart();
   return <header className="relative z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="relative flex items-center justify-between h-16 md:h-20">
+        <div className="relative flex items-center justify-between h-20 md:h-28">
           {/* Mobile menu button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
