@@ -39,8 +39,8 @@ export const Header = () => {
           </Button>
 
           {/* Logo - centered and overlapping below header */}
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2 z-10">
-            <img src={logo} alt="Jangalô" className="h-36 md:h-64 w-auto max-w-[90vw] object-contain translate-y-[90%]" />
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2 top-full z-10 w-[70vw] max-w-[260px] md:max-w-[420px]">
+            <img src={logo} alt="Jangalô" className="w-full h-auto block" />
           </Link>
 
           {/* Desktop Navigation */}
