@@ -18,6 +18,37 @@ function pickLocalized(value: unknown): string {
   return ''
 }
 
+const HTML_ENTITIES: Record<string, string> = {
+  aacute: 'á', Aacute: 'Á', eacute: 'é', Eacute: 'É', iacute: 'í', Iacute: 'Í',
+  oacute: 'ó', Oacute: 'Ó', uacute: 'ú', Uacute: 'Ú', atilde: 'ã', Atilde: 'Ã',
+  otilde: 'õ', Otilde: 'Õ', ccedil: 'ç', Ccedil: 'Ç', acirc: 'â', Acirc: 'Â',
+  ecirc: 'ê', Ecirc: 'Ê', ocirc: 'ô', Ocirc: 'Ô', agrave: 'à', Agrave: 'À',
+  uuml: 'ü', euml: 'ë', nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'",
+}
+
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, code) => String.fromCharCode(parseInt(code, 16)))
+    .replace(/&([a-zA-Z]+);/g, (match, name) => HTML_ENTITIES[name] ?? match)
+}
+
+function stripHtml(html: string): string {
+  const withoutTags = html
+    .replace(/<\/(p|div|li|h[1-6])>/gi, '\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '• ')
+    .replace(/<[^>]+>/g, '')
+
+  return decodeHtmlEntities(withoutTags)
+    .replace(/[ \t]+/g, ' ')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join('\n')
+    .trim()
+}
+
 async function isCallerAuthorized(req: Request, serviceClient: ReturnType<typeof createClient>): Promise<boolean> {
   const cronSecret = req.headers.get('x-cron-secret')
   if (cronSecret && cronSecret === Deno.env.get('CRON_SECRET')) return true
@@ -123,11 +154,11 @@ Deno.serve(async (req) => {
 
       return {
         nuvemshop_product_id: p.id,
-        name: pickLocalized(p.name) || 'Produto sem nome',
-        description: pickLocalized(p.description) || null,
+        name: decodeHtmlEntities(pickLocalized(p.name)) || 'Produto sem nome',
+        description: stripHtml(pickLocalized(p.description)) || null,
         price: promoPrice && promoPrice > 0 ? promoPrice : rawPrice,
         original_price: promoPrice && promoPrice > 0 ? rawPrice : null,
-        category: pickLocalized(p.categories?.[0]?.name) || 'Geral',
+        category: decodeHtmlEntities(pickLocalized(p.categories?.[0]?.name)) || 'Geral',
         image_url: p.images?.[0]?.src || null,
         in_stock: inStock,
       }
