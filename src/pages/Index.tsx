@@ -9,10 +9,10 @@ import { HandmadeBanner } from '@/components/home/HandmadeBanner';
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header logoOverlap />
       <CartDrawer />
-      
-      <main>
+
+      <main className="pt-16 md:pt-20">
         <HeroSection />
         <CategoryGrid />
         <FeaturedProducts />
