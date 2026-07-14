@@ -38,9 +38,9 @@ export const Header = () => {
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          {/* Logo - centered and overlapping below header */}
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2 top-full mt-4 md:mt-6 z-10 w-[70vw] max-w-[260px] md:max-w-[420px]">
-            <img src={logo} alt="Jangalô" className="w-full h-auto block" />
+          {/* Logo - centered within the header */}
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 h-14 md:h-20">
+            <img src={logo} alt="Jangalô" className="h-full w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}
