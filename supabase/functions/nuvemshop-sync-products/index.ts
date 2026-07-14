@@ -18,33 +18,29 @@ function pickLocalized(value: unknown): string {
   return ''
 }
 
-function decodeJwtPayload(token: string): Record<string, unknown> {
-  const base64Url = token.split('.')[1]
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=')
-  return JSON.parse(atob(padded))
-}
+async function isCallerAuthorized(req: Request, serviceClient: ReturnType<typeof createClient>): Promise<boolean> {
+  const cronSecret = req.headers.get('x-cron-secret')
+  if (cronSecret && cronSecret === Deno.env.get('CRON_SECRET')) return true
 
-async function isCallerAdmin(req: Request, serviceClient: ReturnType<typeof createClient>): Promise<boolean> {
   const authHeader = req.headers.get('Authorization') || ''
   const token = authHeader.replace('Bearer ', '')
   if (!token) return false
 
   try {
-    const payload = decodeJwtPayload(token)
-    if (payload.role === 'service_role') return true
+    const anonClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: authHeader } },
+    })
+    const { data: userData, error: userError } = await anonClient.auth.getUser(token)
+    if (userError || !userData.user) return false
 
-    const userId = payload.sub as string | undefined
-    if (!userId) return false
-
-    const { data, error } = await serviceClient.rpc('has_role', { _user_id: userId, _role: 'admin' })
+    const { data, error } = await serviceClient.rpc('has_role', { _user_id: userData.user.id, _role: 'admin' })
     if (error) {
       console.error('has_role check failed:', error)
       return false
     }
     return data === true
   } catch (error) {
-    console.error('Failed to inspect JWT:', error)
+    console.error('Failed to authorize caller:', error)
     return false
   }
 }
@@ -90,7 +86,7 @@ Deno.serve(async (req) => {
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-  const authorized = await isCallerAdmin(req, supabase)
+  const authorized = await isCallerAuthorized(req, supabase)
   if (!authorized) {
     return new Response(JSON.stringify({ error: 'Not authorized' }), {
       status: 403,

@@ -35,11 +35,12 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { LogOut, Plus, Pencil, Trash2, Package, Loader2, Bell, Boxes, ShoppingBag } from 'lucide-react';
+import { LogOut, Plus, Pencil, Trash2, Package, Loader2, Bell, Boxes, ShoppingBag, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { StockManager } from '@/components/admin/StockManager';
 import { NotificationSettings } from '@/components/admin/NotificationSettings';
 import { OrderManager } from '@/components/admin/OrderManager';
+import { NuvemshopSync } from '@/components/admin/NuvemshopSync';
 
 const CATEGORIES = [
   { value: 'novidades', label: 'Novidades' },
@@ -233,6 +234,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="notifications" className="flex items-center gap-2">
               <Bell className="w-4 h-4" />
               Notificações
+            </TabsTrigger>
+            <TabsTrigger value="nuvemshop" className="flex items-center gap-2">
+              <RefreshCw className="w-4 h-4" />
+              Nuvemshop
             </TabsTrigger>
           </TabsList>
 
@@ -462,6 +467,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="notifications">
             <NotificationSettings />
+          </TabsContent>
+
+          <TabsContent value="nuvemshop">
+            <NuvemshopSync />
           </TabsContent>
         </Tabs>
       </main>

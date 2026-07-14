@@ -53,6 +53,45 @@ export type Database = {
         }
         Relationships: []
       }
+      nuvemshop_integration: {
+        Row: {
+          access_token: string
+          connected_at: string
+          connected_by: string | null
+          id: string
+          last_sync_error: string | null
+          last_sync_status: string | null
+          last_synced_at: string | null
+          scope: string | null
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          access_token: string
+          connected_at?: string
+          connected_by?: string | null
+          id?: string
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          scope?: string | null
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          connected_at?: string
+          connected_by?: string | null
+          id?: string
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          scope?: string | null
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
@@ -94,6 +133,7 @@ export type Database = {
           created_at: string
           id: string
           min_stock_alert: number
+          nuvemshop_variant_id: number | null
           product_id: string
           quantity: number
           size: string
@@ -103,6 +143,7 @@ export type Database = {
           created_at?: string
           id?: string
           min_stock_alert?: number
+          nuvemshop_variant_id?: number | null
           product_id: string
           quantity?: number
           size: string
@@ -112,6 +153,7 @@ export type Database = {
           created_at?: string
           id?: string
           min_stock_alert?: number
+          nuvemshop_variant_id?: number | null
           product_id?: string
           quantity?: number
           size?: string
@@ -137,6 +179,7 @@ export type Database = {
           image_url: string | null
           in_stock: boolean
           name: string
+          nuvemshop_product_id: number | null
           original_price: number | null
           price: number
           updated_at: string
@@ -150,6 +193,7 @@ export type Database = {
           image_url?: string | null
           in_stock?: boolean
           name: string
+          nuvemshop_product_id?: number | null
           original_price?: number | null
           price: number
           updated_at?: string
@@ -163,6 +207,7 @@ export type Database = {
           image_url?: string | null
           in_stock?: boolean
           name?: string
+          nuvemshop_product_id?: number | null
           original_price?: number | null
           price?: number
           updated_at?: string
