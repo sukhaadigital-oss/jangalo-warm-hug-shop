@@ -83,22 +83,23 @@ const CheckoutPage = () => {
         productionDays: item.product.productionDays,
       }));
 
-      const { data, error } = await supabase
+      const newOrderId = crypto.randomUUID();
+
+      const { error } = await supabase
         .from('orders')
         .insert({
+          id: newOrderId,
           customer_name: formData.name.trim(),
           customer_phone: formData.phone.trim(),
           customer_address: formData.address.trim(),
           items: orderItems,
           total: subtotal,
           status: 'pending_payment',
-        })
-        .select('id')
-        .single();
+        });
 
       if (error) throw error;
 
-      setOrderId(data.id);
+      setOrderId(newOrderId);
       setStep('payment');
       toast.success('Pedido criado! Agora faça o pagamento via PIX.');
     } catch (error) {
@@ -126,12 +127,12 @@ const CheckoutPage = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ status: 'payment_confirmed' })
-        .eq('id', orderId);
+      const { data, error } = await supabase.rpc('confirm_order_payment', {
+        _order_id: orderId,
+      });
 
       if (error) throw error;
+      if (!data) throw new Error('Order not found or already confirmed');
 
       clearCart();
       setStep('success');
