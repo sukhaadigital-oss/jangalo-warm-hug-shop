@@ -3,7 +3,6 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/cart/CartDrawer';
 import { ProductCard } from '@/components/products/ProductCard';
 import { supabaseToLegacyProduct } from '@/types/product';
 import { products as localProducts } from '@/data/products';
@@ -48,7 +47,6 @@ const ProductsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <CartDrawer />
 
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}

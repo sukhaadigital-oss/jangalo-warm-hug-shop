@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Menu, X, Search, User } from 'lucide-react';
+import { Menu, X, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
 const navLinks = [{
@@ -31,10 +30,6 @@ interface HeaderProps {
 
 export const Header = ({ logoOverlap = false }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const {
-    openCart,
-    totalItems
-  } = useCart();
   return <header className="relative z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="relative flex items-center justify-between h-20 md:h-28">
@@ -71,12 +66,6 @@ export const Header = ({ logoOverlap = false }: HeaderProps) => {
                 <User className="h-5 w-5" />
               </Button>
             </Link>
-            <Button variant="ghost" size="icon" className="relative" onClick={openCart}>
-              <ShoppingBag className="h-5 w-5" />
-              {totalItems > 0 && <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
-                  {totalItems}
-                </span>}
-            </Button>
           </div>
         </div>
 

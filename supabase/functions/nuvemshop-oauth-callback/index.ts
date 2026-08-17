@@ -43,6 +43,22 @@ Deno.serve(async (req) => {
     const accessToken = tokenData.access_token as string
     const scope = tokenData.scope as string | undefined
 
+    let storeUrl: string | null = null
+    try {
+      const storeResponse = await fetch(`https://api.nuvemshop.com.br/2025-03/${storeId}/store`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'User-Agent': 'Jangalo Vitrine Sync (lucasforf01@gmail.com)',
+        },
+      })
+      if (storeResponse.ok) {
+        const storeData = await storeResponse.json()
+        storeUrl = storeData.url_with_protocol ?? null
+      }
+    } catch (error) {
+      console.error('Failed to fetch store info:', error)
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
@@ -50,7 +66,7 @@ Deno.serve(async (req) => {
     const { error } = await supabase
       .from('nuvemshop_integration')
       .upsert(
-        { store_id: storeId, access_token: accessToken, scope, connected_at: new Date().toISOString() },
+        { store_id: storeId, access_token: accessToken, scope, store_url: storeUrl, connected_at: new Date().toISOString() },
         { onConflict: 'store_id' }
       )
 

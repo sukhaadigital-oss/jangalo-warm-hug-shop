@@ -29,13 +29,6 @@ export interface SupabaseProduct {
   updated_at: string;
 }
 
-// Cart item uses the legacy Product type for now
-export interface CartItem {
-  product: Product;
-  size: string;
-  quantity: number;
-}
-
 export interface Category {
   id: string;
   name: string;

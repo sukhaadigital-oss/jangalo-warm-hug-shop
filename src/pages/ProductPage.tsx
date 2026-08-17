@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Leaf, Ruler, Minus, Plus, Heart, Loader2 } from 'lucide-react';
+import { ArrowLeft, Leaf, Ruler, Minus, Plus, Heart, Loader2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/cart/CartDrawer';
-import { useCart } from '@/contexts/CartContext';
 import { useProducts } from '@/hooks/useProducts';
 import { supabaseToLegacyProduct } from '@/types/product';
 import { products as localProducts } from '@/data/products';
+import { supabase } from '@/integrations/supabase/client';
 import { addBusinessDays, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -34,20 +34,45 @@ const sizeGuide = [
   { size: '10', height: '128-134cm', weight: '28-32kg' },
 ];
 
+interface VariantStock {
+  size: string;
+  quantity: number;
+  nuvemshop_variant_id: number | null;
+}
+
 const ProductPage = () => {
   const { id } = useParams();
-  const { addToCart } = useCart();
   const { products: supabaseProducts, isLoading } = useProducts();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [variants, setVariants] = useState<VariantStock[]>([]);
+  const [storeUrl, setStoreUrl] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Find product from Supabase or fall back to local
   const supabaseProduct = supabaseProducts.find((p) => p.id === id);
   const localProduct = localProducts.find((p) => p.id === id);
-  
-  const product = supabaseProduct 
-    ? supabaseToLegacyProduct(supabaseProduct) 
+
+  const product = supabaseProduct
+    ? supabaseToLegacyProduct(supabaseProduct)
     : localProduct;
+
+  useEffect(() => {
+    if (!supabaseProduct) return;
+
+    supabase
+      .from('product_stock')
+      .select('size, quantity, nuvemshop_variant_id')
+      .eq('product_id', supabaseProduct.id)
+      .order('size')
+      .then(({ data }) => setVariants(data || []));
+
+    supabase
+      .from('nuvemshop_store_info')
+      .select('store_url')
+      .maybeSingle()
+      .then(({ data }) => setStoreUrl(data?.store_url ?? null));
+  }, [supabaseProduct]);
 
   if (isLoading) {
     return (
@@ -79,15 +104,25 @@ const ProductPage = () => {
 
   const estimatedShipDate = addBusinessDays(new Date(), product.productionDays);
 
-  const handleAddToCart = () => {
+  // Real per-size variants from Nuvemshop when available, otherwise a generic fallback
+  const availableSizes = variants.length > 0 ? variants.map((v) => v.size) : product.sizes;
+  const selectedVariant = variants.find((v) => v.size === selectedSize);
+
+  const handleBuy = () => {
     if (!selectedSize) return;
-    addToCart(product, selectedSize, quantity);
+
+    if (!selectedVariant?.nuvemshop_variant_id || !storeUrl) {
+      toast.error('Este produto ainda não está disponível para compra online.');
+      return;
+    }
+
+    setIsRedirecting(true);
+    window.location.href = `${storeUrl}/comprar/${selectedVariant.nuvemshop_variant_id}-${quantity}/`;
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <CartDrawer />
 
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
@@ -141,7 +176,7 @@ const ProductPage = () => {
             </div>
 
             {/* Description */}
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
               {product.description}
             </p>
 
@@ -190,19 +225,24 @@ const ProductPage = () => {
                 </Dialog>
               </div>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`h-10 min-w-[44px] px-4 rounded-xl border-2 text-sm font-medium transition-all ${
-                      selectedSize === size
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+                {availableSizes.map((size) => {
+                  const variant = variants.find((v) => v.size === size);
+                  const outOfStock = variant ? variant.quantity <= 0 : false;
+                  return (
+                    <button
+                      key={size}
+                      onClick={() => !outOfStock && setSelectedSize(size)}
+                      disabled={outOfStock}
+                      className={`h-10 min-w-[44px] px-4 rounded-xl border-2 text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                        selectedSize === size
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -226,7 +266,7 @@ const ProductPage = () => {
               </div>
             </div>
 
-            {/* Quantity & Add to Cart */}
+            {/* Quantity & Buy */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex items-center gap-3">
                 <Button
@@ -250,13 +290,18 @@ const ProductPage = () => {
 
               <Button
                 className="flex-1 h-12 rounded-xl font-medium"
-                disabled={!selectedSize || product.stock === 0}
-                onClick={handleAddToCart}
+                disabled={!selectedSize || product.stock === 0 || isRedirecting}
+                onClick={handleBuy}
               >
+                {isRedirecting ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                )}
                 {product.stock === 0
                   ? 'Esgotado'
                   : selectedSize
-                  ? 'Adicionar à Sacola'
+                  ? 'Comprar agora'
                   : 'Selecione um tamanho'}
               </Button>
 
@@ -264,6 +309,9 @@ const ProductPage = () => {
                 <Heart className="h-5 w-5" />
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground -mt-2">
+              Você será direcionado para a loja oficial pra finalizar a compra com segurança.
+            </p>
 
             {/* Stock */}
             {product.stock <= 5 && product.stock > 0 && (

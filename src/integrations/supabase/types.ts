@@ -64,6 +64,7 @@ export type Database = {
           last_synced_at: string | null
           scope: string | null
           store_id: string
+          store_url: string | null
           updated_at: string
         }
         Insert: {
@@ -76,6 +77,7 @@ export type Database = {
           last_synced_at?: string | null
           scope?: string | null
           store_id: string
+          store_url?: string | null
           updated_at?: string
         }
         Update: {
@@ -88,6 +90,7 @@ export type Database = {
           last_synced_at?: string | null
           scope?: string | null
           store_id?: string
+          store_url?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -272,7 +275,13 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      nuvemshop_store_info: {
+        Row: {
+          store_id: string | null
+          store_url: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       confirm_order_payment: {

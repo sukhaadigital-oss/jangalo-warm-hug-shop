@@ -1,6 +1,5 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/cart/CartDrawer';
 import { HeroSection } from '@/components/home/HeroSection';
 import { CategoryGrid } from '@/components/home/CategoryGrid';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
@@ -10,7 +9,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header logoOverlap />
-      <CartDrawer />
 
       <main className="pt-16 md:pt-20">
         <HeroSection />
