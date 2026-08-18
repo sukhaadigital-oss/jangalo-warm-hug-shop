@@ -44,7 +44,7 @@ export const Header = ({ logoOverlap = false }: HeaderProps) => {
               <img src={logo} alt="Jangalô" className="w-full h-auto block" />
             </Link>
           ) : (
-            <Link to="/" className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 h-16 md:h-20">
+            <Link to="/" className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 h-[72px] md:h-20">
               <img src={logo} alt="Jangalô" className="h-full w-auto object-contain" />
             </Link>
           )}
