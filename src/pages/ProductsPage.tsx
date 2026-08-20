@@ -14,7 +14,7 @@ const staticCategories = [
   { id: '1', name: 'Menina', slug: 'menina' },
   { id: '2', name: 'Menino', slug: 'menino' },
   { id: '3', name: 'Bebê', slug: 'bebe' },
-  { id: '4', name: 'Essenciais', slug: 'essenciais' },
+  { id: '4', name: 'Acessórios', slug: 'acessorios' },
 ];
 
 const ProductsPage = () => {

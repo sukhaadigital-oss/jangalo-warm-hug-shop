@@ -17,8 +17,8 @@ const navLinks = [{
   name: 'Bebê',
   href: '/produtos?categoria=bebe'
 }, {
-  name: 'Essenciais',
-  href: '/produtos?categoria=essenciais'
+  name: 'Acessórios',
+  href: '/produtos?categoria=acessorios'
 }, {
   name: 'Sale',
   href: '/produtos?categoria=sale'

@@ -12,7 +12,7 @@ export const categories: Category[] = [
   { id: '1', name: 'Menina', slug: 'menina', image: categoryMenina },
   { id: '2', name: 'Menino', slug: 'menino', image: categoryMenino },
   { id: '3', name: 'Bebê', slug: 'bebe', image: categoryBebe },
-  { id: '4', name: 'Essenciais', slug: 'essenciais', image: categoryEssenciais },
+  { id: '4', name: 'Acessórios', slug: 'acessorios', image: categoryEssenciais },
 ];
 
 export const products: Product[] = [
@@ -69,7 +69,7 @@ export const products: Product[] = [
     name: 'Conjunto Essencial Bebê',
     price: 199.90,
     description: 'Kit com body, calça e touca em algodão orgânico. Essenciais para o enxoval.',
-    category: 'essenciais',
+    category: 'acessorios',
     sizes: ['RN', 'P', 'M', 'G'],
     images: [categoryEssenciais],
     productionDays: 6,

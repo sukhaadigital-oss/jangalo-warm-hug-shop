@@ -5,7 +5,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   description: string;
-  category: 'novidades' | 'menina' | 'menino' | 'bebe' | 'essenciais' | 'sale';
+  category: 'novidades' | 'menina' | 'menino' | 'bebe' | 'acessorios' | 'sale';
   sizes: string[];
   images: string[];
   productionDays: number;

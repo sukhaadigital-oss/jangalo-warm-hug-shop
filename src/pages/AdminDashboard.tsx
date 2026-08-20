@@ -47,7 +47,7 @@ const CATEGORIES = [
   { value: 'menina', label: 'Menina' },
   { value: 'menino', label: 'Menino' },
   { value: 'bebe', label: 'Bebê' },
-  { value: 'essenciais', label: 'Essenciais' },
+  { value: 'acessorios', label: 'Acessórios' },
   { value: 'sale', label: 'Promoção' },
 ];
 
