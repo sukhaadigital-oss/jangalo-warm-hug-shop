@@ -31,13 +31,6 @@ export const HandmadeBanner = () => {
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-olive-light text-olive text-sm font-medium mb-4">
             📦 Informações de Envio
           </span>
-          <h2 className="font-serif text-3xl md:text-4xl font-medium mb-4">
-            Exclusivo e Sob Encomenda
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Nós praticamos o SLOW FASHION. Produzimos sob demanda, especialmente para cada cliente, 
-            de maneira consciente diminuindo assim nosso impacto social e desperdício de materiais.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
