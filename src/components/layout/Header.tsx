@@ -2,26 +2,25 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
 const navLinks = [{
-  name: 'Novidades',
-  href: '/produtos?categoria=novidades'
+  name: 'Vestidos',
+  href: '/produtos?categoria=vestidos'
 }, {
-  name: 'Menina',
-  href: '/produtos?categoria=menina'
+  name: 'Lançamentos',
+  href: '/produtos?categoria=lancamentos'
 }, {
-  name: 'Menino',
-  href: '/produtos?categoria=menino'
+  name: 'Linha Batizado',
+  href: '/produtos?categoria=linha-batizado'
 }, {
-  name: 'Bebê',
-  href: '/produtos?categoria=bebe'
+  name: 'Meninos',
+  href: '/produtos?categoria=meninos'
 }, {
-  name: 'Acessórios',
-  href: '/produtos?categoria=acessorios'
+  name: 'Rompers',
+  href: '/produtos?categoria=rompers'
 }, {
-  name: 'Sale',
-  href: '/produtos?categoria=sale'
+  name: 'Batas e Camisas',
+  href: '/produtos?categoria=batas-e-camisas'
 }];
 interface HeaderProps {
   /** Home page treatment: bigger logo that overlaps the content below the header. */
@@ -51,7 +50,7 @@ export const Header = ({ logoOverlap = false }: HeaderProps) => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map(link => <Link key={link.name} to={link.href} className={cn("text-sm font-medium text-muted-foreground hover:text-foreground transition-colors", link.name === 'Sale' && "text-primary hover:text-primary/80")}>
+            {navLinks.map(link => <Link key={link.name} to={link.href} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 {link.name}
               </Link>)}
           </nav>
@@ -72,7 +71,7 @@ export const Header = ({ logoOverlap = false }: HeaderProps) => {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && <nav className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-2">
-              {navLinks.map(link => <Link key={link.name} to={link.href} className={cn("py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors", link.name === 'Sale' && "text-primary hover:text-primary/80")} onClick={() => setIsMobileMenuOpen(false)}>
+              {navLinks.map(link => <Link key={link.name} to={link.href} className="py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                   {link.name}
                 </Link>)}
             </div>
