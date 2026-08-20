@@ -21,11 +21,6 @@ export const HeroSection = () => {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-xl h-12 px-6">
-              <Link to="/sobre">
-                Nossa História
-              </Link>
-            </Button>
           </div>
         </div>
       </div>
