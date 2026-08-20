@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Product } from '@/types/product';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ShoppingBag } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -15,15 +17,15 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <Link to={`/produto/${product.id}`} className="group block">
-      <div className="product-card">
+    <div className="group product-card">
+      <Link to={`/produto/${product.id}`} className="block">
         <div className="relative aspect-square overflow-hidden">
           <img
             src={product.images[0]}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          
+
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {product.isNew && (
@@ -54,11 +56,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
 
-        <div className="p-4">
+        <div className="p-4 pb-0">
           <h3 className="font-serif text-base font-medium leading-tight group-hover:text-primary transition-colors">
             {product.name}
           </h3>
-          
+
           <div className="flex items-center gap-2 mt-2">
             <span className="font-semibold">{formatPrice(product.price)}</span>
             {product.originalPrice && (
@@ -67,12 +69,23 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               </span>
             )}
           </div>
-
-          <p className="text-xs text-olive mt-2">
-            Produção: {product.productionDays} dias
-          </p>
         </div>
+      </Link>
+
+      <div className="p-4 pt-3">
+        {product.stock === 0 ? (
+          <Button size="sm" className="w-full rounded-xl" disabled>
+            Esgotado
+          </Button>
+        ) : (
+          <Button asChild size="sm" className="w-full rounded-xl">
+            <Link to={`/produto/${product.id}`}>
+              <ShoppingBag className="h-4 w-4 mr-2" />
+              Comprar
+            </Link>
+          </Button>
+        )}
       </div>
-    </Link>
+    </div>
   );
 };
