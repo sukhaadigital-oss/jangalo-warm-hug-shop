@@ -6,12 +6,6 @@ export const HeroSection = () => {
   return <section className="bg-background">
       <div className="container mx-auto px-4 py-16 md:py-20 lg:py-24">
         <div className="max-w-xl mx-auto text-center pt-20 md:pt-32">
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium leading-tight mb-6 animate-fade-in" style={{
-          animationDelay: '0.1s'
-        }}>
-            Natural como criança
-          </h1>
-          
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 animate-fade-in" style={{
           animationDelay: '0.2s'
         }}>
