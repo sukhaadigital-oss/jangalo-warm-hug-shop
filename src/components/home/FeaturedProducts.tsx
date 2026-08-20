@@ -19,7 +19,7 @@ export const FeaturedProducts = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
         <div>
           <h2 className="font-serif text-3xl md:text-4xl font-medium mb-2">
-            Novidades
+            Destaque
           </h2>
           <p className="text-muted-foreground">
             Peças recém-chegadas, feitas com amor

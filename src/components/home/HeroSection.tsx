@@ -17,7 +17,7 @@ export const HeroSection = () => {
         }}>
             <Button asChild size="lg" className="rounded-xl h-12 px-6">
               <Link to="/produtos">
-                Ver Coleção
+                Shop Now
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
