@@ -6,12 +6,6 @@ export const HeroSection = () => {
   return <section className="bg-background">
       <div className="container mx-auto px-4 py-16 md:py-20 lg:py-24">
         <div className="max-w-xl mx-auto text-center pt-20 md:pt-32">
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 animate-fade-in" style={{
-          animationDelay: '0.2s'
-        }}>
-            Conforto para crescer e brincar. Cada peça é feita à mão com muito carinho.
-          </p>
-          
           <div className="flex flex-wrap justify-center gap-4 animate-fade-in" style={{
           animationDelay: '0.3s'
         }}>

@@ -19,8 +19,8 @@ const navLinks = [{
   name: 'Rompers',
   href: '/produtos?categoria=rompers'
 }, {
-  name: 'Batas e Camisas',
-  href: '/produtos?categoria=batas-e-camisas'
+  name: 'Conjuntos',
+  href: '/produtos?categoria=conjuntos'
 }];
 interface HeaderProps {
   /** Home page treatment: bigger logo that overlaps the content below the header. */
