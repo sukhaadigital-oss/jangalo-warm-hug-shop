@@ -6,7 +6,7 @@ export const Footer = () => {
   return (
     <footer className="bg-card border-t border-border mt-20">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/">
@@ -41,17 +41,6 @@ export const Footer = () => {
               <li><Link to="/produtos?categoria=menina" className="hover:text-foreground transition-colors">Menina</Link></li>
               <li><Link to="/produtos?categoria=menino" className="hover:text-foreground transition-colors">Menino</Link></li>
               <li><Link to="/produtos?categoria=bebe" className="hover:text-foreground transition-colors">Bebê</Link></li>
-            </ul>
-          </div>
-
-          {/* Info */}
-          <div>
-            <h4 className="font-medium mb-4">Informações</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/sobre" className="hover:text-foreground transition-colors">Sobre Nós</Link></li>
-              <li><Link to="/guia-medidas" className="hover:text-foreground transition-colors">Guia de Medidas</Link></li>
-              <li><Link to="/como-funciona" className="hover:text-foreground transition-colors">Como Funciona</Link></li>
-              <li><Link to="/contato" className="hover:text-foreground transition-colors">Contato</Link></li>
             </ul>
           </div>
 
